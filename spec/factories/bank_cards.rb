@@ -9,5 +9,7 @@ FactoryBot.define do
     trait :primary do
       primary { true }
     end
+
+    user
   end
 end
