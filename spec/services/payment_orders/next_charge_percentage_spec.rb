@@ -29,5 +29,13 @@ describe PaymentOrders::NextChargePercentage do
 
       it { is_expected.to eq(nil) }
     end
+
+    context 'when given payment_order with 33 percentage' do
+      let(:percentage_paid) { 33 }
+
+      it 'raises an error' do
+        expect { subject }.to raise_error(described_class::UnknownPercentageValue)
+      end
+    end
   end
 end
