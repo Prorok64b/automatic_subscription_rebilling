@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :payment_order do
-    status { 'pending' }
+    status { PaymentOrder::Statuses::CREATED }
     cash_amount { BigDecimal('49.99') }
-    percentage_paid { 50 }
 
     trait :created do
       status { PaymentOrder::Statuses::CREATED }

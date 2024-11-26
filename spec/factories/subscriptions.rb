@@ -1,6 +1,5 @@
 FactoryBot.define do
   factory :subscription do
-    percentage_paid { 100 }
     payment_on { Date.today + 1.month }
     price { BigDecimal('34.99') }
 
