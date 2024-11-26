@@ -11,15 +11,14 @@ describe PaymentOrders::Executor do
     let!(:payment_order) do
       create(
         :payment_order,
-        :pending,
         subscription: subscription,
-        percentage_paid: 75
+        cash_amount: BigDecimal('100')
       )
     end
 
     before do
       allow(Bank::CardCharger).to receive(:call)
-        .with(bank_card, payment_order.percentage_paid)
+        .with(bank_card, payment_order.cash_amount)
         .and_return(bank_response)
     end
 
