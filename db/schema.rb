@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_22_222236) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_25_160626) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -44,6 +44,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_22_222236) do
     t.datetime "updated_at", null: false
     t.boolean "active", default: false, null: false
     t.decimal "price", null: false
+    t.decimal "cash_amount_paid", default: "0.0", null: false
     t.index ["active"], name: "index_subscriptions_on_active"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
