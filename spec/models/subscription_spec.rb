@@ -81,5 +81,11 @@ describe Subscription, type: :model do
 
       it { is_expected.to eq(false) }
     end
+
+    context 'when given payment_on as nil' do
+      let(:instance) { build(:subscription) }
+
+      it { is_expected.to eq(false) }
+    end
   end
 end

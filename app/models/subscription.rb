@@ -16,6 +16,8 @@ class Subscription < ApplicationRecord
   end
 
   def expired?
+    return false unless payment_on
+
     payment_on < Date.today
   end
 end
