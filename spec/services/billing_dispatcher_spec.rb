@@ -204,6 +204,8 @@ describe BillingDispatcher do
             .and_return(success_bank_response)
         end
 
+        it { is_expected.to eq(:success) }
+
         include_examples 'payment orders creation', 1
         include_examples 'subscription activation'
         include_examples 'scheduling subscription renewal'
@@ -216,6 +218,8 @@ describe BillingDispatcher do
             .and_return(insufficient_funds_bank_response)
         end
 
+        it { is_expected.to eq(:insufficient_funds) }
+
         include_examples 'payment orders creation', 1
         include_examples 'keeping subscription inactive'
       end
@@ -226,6 +230,8 @@ describe BillingDispatcher do
             .with(bank_card, 75)
             .and_return(error_bank_response)
         end
+
+        it { is_expected.to eq(:error) }
 
         include_examples 'payment orders creation', 1
         include_examples 'keeping subscription inactive'
