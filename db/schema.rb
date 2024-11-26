@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_25_160626) do
+ActiveRecord::Schema[7.2].define(version: 2024_11_26_212902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,7 +29,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_25_160626) do
   create_table "payment_orders", force: :cascade do |t|
     t.string "status", null: false
     t.decimal "cash_amount", null: false
-    t.integer "percentage_paid", null: false
     t.bigint "subscription_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -37,8 +36,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_25_160626) do
   end
 
   create_table "subscriptions", force: :cascade do |t|
-    t.integer "percentage_paid", null: false
-    t.date "payment_on", null: false
+    t.date "payment_on"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
