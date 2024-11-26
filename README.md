@@ -1,25 +1,22 @@
-# README
+# How to run
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+postgres instance required.
 
-Things you may want to cover:
+```
+rails db:create db:migrate db:seed
 
-* Ruby version
+CASH_AMOUNT_ON_BANK_ACCOUNT='130' rails s
+```
 
-* System dependencies
+# Env variables
 
-* Configuration
+```
+ # setup bank account balance, then you will be able to pay subscription which price is less or equal 130
+CASH_AMOUNT_ON_BANK_ACCOUNT='130' rails s
 
-* Database creation
+# will make bank response with error, to emulate error scenario
+BEHAVIOR='error' rails s
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# automatic_subscription_rebilling
+# will make bank response with insufficient funds, to emulate insufficient funds scenario
+BEHAVIOR='insufficient_funds' rails s
+```
