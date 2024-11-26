@@ -20,7 +20,4 @@ class PaymentOrder < ApplicationRecord
   }
 
   validates :cash_amount, presence: true
-
-  # TODO: remove percentage_paid
-  validates :percentage_paid, presence: true, inclusion: { in: [0, 25, 50, 75, 100] }
 end

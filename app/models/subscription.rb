@@ -3,9 +3,6 @@ class Subscription < ApplicationRecord
 
   has_many :payment_orders
 
-  validates :percentage_paid, presence: true, inclusion: { in: [0, 25, 50, 75, 100] }
-  validates :payment_on, presence: true
-
   def fully_paid?
     cash_amount_paid == price
   end
