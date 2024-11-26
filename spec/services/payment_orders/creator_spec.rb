@@ -15,7 +15,6 @@ describe PaymentOrders::Creator do
       expect(subject).to have_attributes(
         subscription_id: subscription.id,
         status: PaymentOrder::Statuses::CREATED,
-        percentage_paid: 0,
         cash_amount: BigDecimal('80')
       )
     end

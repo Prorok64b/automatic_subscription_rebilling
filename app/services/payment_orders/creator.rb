@@ -13,7 +13,6 @@ module PaymentOrders
       PaymentOrder.create!(
         subscription: subscription,
         status: PaymentOrder::Statuses::CREATED,
-        percentage_paid: 0, # TODO: to remove
         cash_amount: cash_amount_to_pay
       )
     end

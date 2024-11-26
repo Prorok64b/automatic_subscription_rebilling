@@ -22,7 +22,7 @@ class BillingDispatcher
 
   private
 
-  attr_reader :subscription, :percentage_paid, :cash_amount
+  attr_reader :subscription, :cash_amount
 
   def perform_full_payment
     print_log("[PERFORMING FULL PAYMENT]")
