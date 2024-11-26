@@ -194,7 +194,7 @@ describe BillingDispatcher do
       end
     end
 
-    context 'when given unpaid subscription' do
+    context 'when given partialy paid subscription' do
       let(:cash_amount_paid) { 25 }
 
       context 'when bank responses with success' do
@@ -235,6 +235,14 @@ describe BillingDispatcher do
 
         include_examples 'payment orders creation', 1
         include_examples 'keeping subscription inactive'
+      end
+    end
+
+    context 'when given fully paid subscription' do
+      let(:cash_amount_paid) { 100 }
+
+      it 'raises proper error' do
+        expect { subject }.to raise_error(described_class::SubscriptionAlreadyPaidError)
       end
     end
   end

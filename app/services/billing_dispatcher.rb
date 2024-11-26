@@ -1,4 +1,6 @@
 class BillingDispatcher
+  class SubscriptionAlreadyPaidError < StandardError; end
+
   def self.call(...)
     new(...).call
   end
@@ -11,7 +13,7 @@ class BillingDispatcher
   def call
     print_log("[START PROCESSING]")
 
-    # raise error if subscription.fully_paid?
+    raise SubscriptionAlreadyPaidError if subscription.fully_paid?
 
     return perform_full_payment if subscription.unpaid?
 
@@ -23,6 +25,8 @@ class BillingDispatcher
   attr_reader :subscription, :percentage_paid, :cash_amount
 
   def perform_full_payment
+    print_log("[PERFORMING FULL PAYMENT]")
+
     payment_order = FullBillingExecutor.call(subscription)
 
     return handle_success         if payment_order.success?
@@ -33,6 +37,8 @@ class BillingDispatcher
   end
 
   def perform_partial_payment
+    print_log("[PERFORMING PARTIAL PAYMENT]")
+
     payment_order = PartialBillingExecutor.call(subscription)
 
     # if we pay by parts, payment order for every part will be partial
@@ -44,6 +50,8 @@ class BillingDispatcher
 
   def handle_partial_success
     schedule_in_a_week_retry
+
+    print_log("[PARTIAL SUCCESS]")
 
     :insufficient_funds
   end
@@ -79,10 +87,11 @@ class BillingDispatcher
   end
 
   def schedule_subscription_renewal
-    SubscriptionPaymentWorker.perform_in(
-      subscription.payment_on.to_datetime,
-      subscription.id
-    )
+    renew_on = subscription.payment_on.to_datetime
+
+    print_log("SCHEDULED SUBSCRIPTION RENEWAL on #{renew_on}")
+
+    SubscriptionPaymentWorker.perform_in(renew_on, subscription.id)
   end
 
   def print_log(message)
