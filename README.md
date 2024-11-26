@@ -20,3 +20,11 @@ BEHAVIOR='error' rails s
 # will make bank response with insufficient funds, to emulate insufficient funds scenario
 BEHAVIOR='insufficient_funds' rails s
 ```
+
+# API call
+
+```
+POST http://127.0.0.1:3000/paymentIntents/create
+
+body: { "subscription_id": 19 }
+```
