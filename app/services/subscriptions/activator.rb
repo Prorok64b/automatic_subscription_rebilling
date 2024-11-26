@@ -25,7 +25,7 @@ module Subscriptions
     attr_reader :subscription, :current_payment_on
 
     def new_payment_on
-      current_payment_on + 1.month
+      (current_payment_on || Date.today) + 1.month
     end
 
     def print_log(message)
