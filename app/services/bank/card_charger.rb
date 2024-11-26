@@ -10,6 +10,10 @@ module Bank
       end
 
       attr_reader :code, :msg
+
+      def to_s
+        "Bank response: code: #{code}, message: #{msg}"
+      end
     end
 
     def self.call(...)
@@ -22,14 +26,39 @@ module Bank
     end
 
     def call
+      case ENV['BEHAVIOR']
+      when 'success'
+        success
+      when 'insufficient_funds'
+        insufficient_funds
+      when 'error'
+        error
+      end
+    end
+
+    private
+
+    attr_reader :bank_card, :cash_amount
+
+    def success
       Bank::CardCharger::Response.new(
         code: :success,
         msg: 'Transaction has been completed!'
       )
     end
 
-    private
+    def insufficient_funds
+      Bank::CardCharger::Response.new(
+        code: :insufficient_funds,
+        msg: 'Insufficient funds on the bank account'
+      )
+    end
 
-    attr_reader :bank_card, :cash_amount
+    def error
+      Bank::CardCharger::Response.new(
+        code: :error,
+        msg: 'Invalid card number'
+      )
+    end
   end
 end
