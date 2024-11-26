@@ -4,22 +4,28 @@ module PaymentOrders
       new(...).call
     end
 
-    def initialize(subscription, percentage)
+    def initialize(subscription, cash_amount)
       @subscription = subscription
-      @percentage = percentage
+      @cash_amount = cash_amount
     end
 
     def call
       PaymentOrder.create!(
         subscription: subscription,
         status: PaymentOrder::Statuses::CREATED,
-        percentage_paid: percentage,
-        cash_amount: BigDecimal('0') # TODO: to remove
+        percentage_paid: 0, # TODO: to remove
+        cash_amount: cash_amount_to_pay
       )
     end
 
     private
 
-    attr_reader :subscription, :percentage
+    attr_reader :subscription, :cash_amount
+
+    def cash_amount_to_pay
+      return subscription.price if subscription.price <= cash_amount
+
+      cash_amount
+    end
   end
 end

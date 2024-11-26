@@ -2,10 +2,10 @@ require 'rails_helper'
 
 describe PaymentOrders::Creator do
   describe '.call' do
-    subject { described_class.call(subscription, percentage) }
+    subject { described_class.call(subscription, amount) }
 
-    let!(:subscription) { create(:subscription) }
-    let(:percentage) { 100 }
+    let!(:subscription) { create(:subscription, price: BigDecimal('80')) }
+    let(:amount) { BigDecimal('99.99') }
 
     it 'creates new PaymentOrder' do
       expect { subject }.to change { PaymentOrder.count }.by(1)
@@ -15,8 +15,8 @@ describe PaymentOrders::Creator do
       expect(subject).to have_attributes(
         subscription_id: subscription.id,
         status: PaymentOrder::Statuses::CREATED,
-        percentage_paid: percentage,
-        cash_amount: BigDecimal('0')
+        percentage_paid: 0,
+        cash_amount: BigDecimal('80')
       )
     end
   end
