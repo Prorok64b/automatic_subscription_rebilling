@@ -56,17 +56,36 @@ describe BillingDispatcher do
       end
     end
 
+    shared_examples_for 'subscription renewal' do
+      it 'updates payment_on' do
+        expect { subject }.to change { subscription.reload.payment_on }
+      end
+    end
+
     shared_examples_for 'subscription activation' do
       it 'activates subscription' do
         expect { subject }
-          .to change { subscription.active }.from(false).to(true)
-          .and change { subscription.payment_on }
+          .to change { subscription.reload.active }.from(false).to(true)
+      end
+
+      include_examples 'subscription renewal'
+    end
+
+    shared_examples_for 'subscription deactivation' do
+      it 'deactivates subscription' do
+        expect { subject }.to change { subscription.reload.active }.to(false)
+      end
+    end
+
+    shared_examples_for 'preparing subscription to renewal' do
+      it 'resets cash_amount_paid' do
+        expect { subject }.to change { subscription.reload.cash_amount_paid }.to(0)
       end
     end
 
     shared_examples_for 'keeping subscription inactive' do
       it 'does not activate subscription' do
-        expect { subject }.not_to change { subscription.active }
+        expect { subject }.not_to change { subscription.reload.active }
       end
     end
 
@@ -241,8 +260,41 @@ describe BillingDispatcher do
     context 'when given fully paid subscription' do
       let(:cash_amount_paid) { 100 }
 
-      it 'raises proper error' do
-        expect { subject }.to raise_error(described_class::SubscriptionAlreadyPaidError)
+      it { is_expected.to eq(:error) }
+    end
+
+    context 'when given expired subscription' do
+      let!(:subscription) do
+        create(
+          :subscription,
+          :active,
+          user: user,
+          price: 100,
+          payment_on: Date.today - 1.day,
+          cash_amount_paid: 100
+        )
+      end
+
+      include_examples 'preparing subscription to renewal'
+
+      context 'when there is enough funds to pay' do
+        before do
+          allow(Bank::CardCharger).to receive(:call)
+            .with(bank_card, 100)
+            .and_return(success_bank_response)
+        end
+
+        include_examples 'subscription renewal'
+      end
+
+      context 'when there is not enough funds to pay' do
+        before do
+          allow(Bank::CardCharger).to receive(:call)
+            .with(bank_card, 100)
+            .and_return(insufficient_funds_bank_response)
+        end
+
+        include_examples 'subscription deactivation'
       end
     end
   end

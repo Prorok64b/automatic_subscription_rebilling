@@ -26,14 +26,9 @@ module Bank
     end
 
     def call
-      case ENV['BEHAVIOR']
-      when 'success'
-        success
-      when 'insufficient_funds'
-        insufficient_funds
-      when 'error'
-        error
-      end
+      return error if ENV['BEHAVIOR'] == 'error'
+      return success if cash_amount <= ENV['CASH_AMOUNT_ON_BANK_ACCOUNT'].to_i
+      return insufficient_funds if cash_amount > ENV['CASH_AMOUNT_ON_BANK_ACCOUNT'].to_i
     end
 
     private

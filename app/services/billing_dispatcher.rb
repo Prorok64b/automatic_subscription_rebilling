@@ -1,6 +1,4 @@
 class BillingDispatcher
-  class SubscriptionAlreadyPaidError < StandardError; end
-
   def self.call(...)
     new(...).call
   end
@@ -13,7 +11,9 @@ class BillingDispatcher
   def call
     print_log("[START PROCESSING]")
 
-    raise SubscriptionAlreadyPaidError if subscription.fully_paid?
+    prepare_for_renewal if subscription.expired?
+
+    return :error if subscription.fully_paid? && !subscription.expired?
 
     return perform_full_payment if subscription.unpaid?
 
@@ -49,6 +49,7 @@ class BillingDispatcher
   end
 
   def handle_partial_success
+    deactive_subscription
     schedule_in_a_week_retry
 
     print_log("[PARTIAL SUCCESS]")
@@ -67,15 +68,22 @@ class BillingDispatcher
   end
 
   def handle_insufficient_funds
+    deactive_subscription
+
     print_log("[INSUFFICIENT FUNDS]")
 
     :insufficient_funds
   end
 
   def handle_error
+    deactive_subscription
     print_log("[ERROR]")
 
     :error
+  end
+
+  def prepare_for_renewal
+    subscription.update!(cash_amount_paid: 0)
   end
 
   def schedule_in_a_week_retry
@@ -92,6 +100,10 @@ class BillingDispatcher
     print_log("SCHEDULED SUBSCRIPTION RENEWAL on #{renew_on}")
 
     SubscriptionPaymentWorker.perform_in(renew_on, subscription.id)
+  end
+
+  def deactive_subscription
+    subscription.update!(active: false) if subscription.active?
   end
 
   def print_log(message)

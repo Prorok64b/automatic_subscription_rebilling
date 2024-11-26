@@ -66,4 +66,20 @@ describe Subscription, type: :model do
       it { is_expected.to eq(true) }
     end
   end
+
+  describe "#expired?" do
+    subject { instance.expired? }
+
+    context 'when given expired subscription' do
+      let(:instance) { build(:subscription, payment_on: Date.today - 1.day) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context 'when given unexpired subscription' do
+      let(:instance) { build(:subscription, payment_on: Date.today + 30.days) }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end

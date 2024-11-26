@@ -22,8 +22,6 @@ module PaymentOrders
 
       response = Bank::CardCharger.call(bank_card, payment_order.cash_amount)
 
-      print_log(response.to_s)
-
       case response.code
       when :success
         handle_success
